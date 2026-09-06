@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Button } from '../components/ui';
 import { Product } from '../types';
 import { Search, Plus, Trash2 } from 'lucide-react';
@@ -15,7 +15,14 @@ export default function MasterBarangView({
   onDeleteProduct?: (id: string) => void
 }) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [newProd, setNewProd] = useState<Partial<Product>>({ code: '', name: '', unit: 'Pcs', stock: 0, price: 0, minStock: 5 });
+  
+  const generateNewCode = () => {
+    const prefix = 'BRG';
+    const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+    return `${prefix}-${random}`;
+  };
+
+  const [newProd, setNewProd] = useState<Partial<Product>>({ code: generateNewCode(), name: '', unit: 'Pcs', stock: 0, price: 0, minStock: 5 });
 
   const filteredProducts = products.filter(p => 
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -26,14 +33,14 @@ export default function MasterBarangView({
     e.preventDefault();
     onAddProduct({ 
       id: Date.now().toString(), 
-      code: newProd.code!, 
+      code: newProd.code || generateNewCode(), 
       name: newProd.name!, 
       unit: newProd.unit!, 
       stock: Number(newProd.stock), 
       price: Number(newProd.price),
       minStock: Number(newProd.minStock) || 0
     });
-    setNewProd({ code: '', name: '', unit: 'Pcs', stock: 0, price: 0, minStock: 5 });
+    setNewProd({ code: generateNewCode(), name: '', unit: 'Pcs', stock: 0, price: 0, minStock: 5 });
   };
 
   return (

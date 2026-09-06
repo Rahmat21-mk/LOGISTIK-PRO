@@ -26,6 +26,7 @@ export default function BarangMasukView({
 }) {
   const [viewTab, setViewTab] = useState<'formulir' | 'riwayat' | 'sortir' | 'serah_terima'>('formulir');
   const [selectedProductId, setSelectedProductId] = useState('');
+  const [productInput, setProductInput] = useState('');
   const [quantity, setQuantity] = useState('');
   const [addedItems, setAddedItems] = useState<TransactionItem[]>([]);
   
@@ -73,6 +74,7 @@ export default function BarangMasukView({
         setAddedItems([...addedItems, { ...product, qty: parseInt(quantity) }]);
       }
       setSelectedProductId('');
+      setProductInput('');
       setQuantity('');
     }
   };
@@ -235,16 +237,19 @@ export default function BarangMasukView({
               <div className="flex flex-col md:flex-row gap-2">
                 <input 
                   list="products-masuk" 
-                  value={selectedProductId ? products.find(p => p.id === selectedProductId)?.name || '' : ''} 
+                  value={productInput} 
                   onChange={e => {
-                    const p = products.find(prod => prod.name === e.target.value);
+                    const val = e.target.value;
+                    setProductInput(val);
+                    const p = products.find(prod => `${prod.code} - ${prod.name}` === val);
                     if (p) setSelectedProductId(p.id);
+                    else setSelectedProductId('');
                   }} 
                   className="flex-1 px-2 py-1.5 text-xs border border-slate-200 rounded" 
                   placeholder="Ketik nama barang..."
                 />
                 <datalist id="products-masuk">
-                  {products.map(p => <option key={p.id} value={p.name} />)}
+                  {products.map(p => <option key={p.id} value={`${p.code} - ${p.name}`} />)}
                 </datalist>
 
                 <input type="number" value={quantity} onChange={e => setQuantity(e.target.value)} placeholder="Qty" className="w-20 px-2 py-1.5 text-xs border border-slate-200 rounded" min="1" />

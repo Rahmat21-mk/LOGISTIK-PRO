@@ -37,7 +37,12 @@ export default function BarangKeluarView({
 
   const handleAdd = () => {
     if (!selectedProductName || !quantity || parseInt(quantity) <= 0) return;
-    const product = products.find(p => p.name.toLowerCase() === selectedProductName.toLowerCase());
+    
+    // Find by full match (Code - Name) or just Name
+    const product = products.find(p => 
+      `${p.code} - ${p.name}`.toLowerCase() === selectedProductName.toLowerCase() ||
+      p.name.toLowerCase() === selectedProductName.toLowerCase()
+    );
     
     if (product) {
       if (product.stock < parseInt(quantity)) {
@@ -168,7 +173,7 @@ export default function BarangKeluarView({
                   placeholder="Ketik nama barang..."
                 />
                 <datalist id="products-keluar">
-                  {products.filter(p => p.stock > 0).map(p => <option key={p.id} value={p.name} />)}
+                  {products.filter(p => p.stock > 0).map(p => <option key={p.id} value={`${p.code} - ${p.name}`} />)}
                 </datalist>
 
                 <input type="number" value={quantity} onChange={e => setQuantity(e.target.value)} placeholder="Qty" className="w-20 px-2 py-1.5 text-xs border border-slate-200 rounded" min="1" />
@@ -247,7 +252,7 @@ export default function BarangKeluarView({
                   placeholder="Ketik nama lampu..."
                 />
                 <datalist id="products-lampu">
-                  {lampuProducts.map(p => <option key={p.id} value={p.name} />)}
+                  {lampuProducts.map(p => <option key={p.id} value={`${p.code} - ${p.name}`} />)}
                 </datalist>
 
                 <input type="number" value={quantity} onChange={e => setQuantity(e.target.value)} placeholder="Qty" className="w-20 px-2 py-1.5 text-xs border border-amber-200 rounded" min="1" />
